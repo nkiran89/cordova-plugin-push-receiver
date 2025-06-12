@@ -1,0 +1,14 @@
+<plugin id="cordova-plugin-push-receiver" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+  <name>PushReceiver</name>
+  <js-module src="www/pushReceiver.js" name="PushReceiver">
+    <clobbers target="PushReceiver"/>
+  </js-module>
+
+  <platform name="android">
+    <source-file src="src/android/PushReceiver.java" target-dir="src/com/example/pushreceiver" />
+  </platform>
+
+  <!-- <platform name="ios">
+    <source-file src="src/ios/PushReceiver.swift" />
+  </platform> -->
+</plugin>
