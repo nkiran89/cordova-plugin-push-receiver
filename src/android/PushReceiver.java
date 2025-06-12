@@ -14,12 +14,13 @@ import java.net.URL;
 
 public class PushReceiver extends FirebaseMessagingService {
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onMessageReceived(RemoteMessage remoteMessage) throws JSONException{
         // Handle the push notification here
         String message = remoteMessage.getNotification().getBody();
         // TODO: Send message to JS via Cordova Plugin bridge
 
          //Create JSON string
+         
         JSONObject jsonObject = new JSONObject();
             jsonObject.put("Title", message);
             jsonObject.put("Message",message);
