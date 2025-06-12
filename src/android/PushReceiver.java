@@ -5,6 +5,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.apache.cordova.CallbackContext;
 
 import org.json.JSONObject;
+import org.json.JSONException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,18 +15,26 @@ import java.net.URL;
 
 public class PushReceiver extends FirebaseMessagingService {
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) throws JSONException{
+    public void onMessageReceived(RemoteMessage remoteMessage) {
         // Handle the push notification here
         String message = remoteMessage.getNotification().getBody();
         // TODO: Send message to JS via Cordova Plugin bridge
 
          //Create JSON string
-         
-        JSONObject jsonObject = new JSONObject();
+         String jsonInputString;
+         try{
+             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Title", message);
             jsonObject.put("Message",message);
 
-            String jsonInputString = jsonObject.toString();
+            jsonInputString = jsonObject.toString();
+         }
+         catch(JSONException e) {
+               e.printStackTrace();
+               return null; 
+
+         }
+       
 
         //Call REST API to notify about push received on device
         String apiUrl = "https://kiran-nikam.outsystemscloud.com/SampleAPITest/rest/Notify/PostMessage";
@@ -59,6 +68,15 @@ public class PushReceiver extends FirebaseMessagingService {
 
         connection.disconnect();
     }
+
+    public static JSONObject toJsonObject(String json){
+    try {
+        return new JSONObject(json);
+    } catch (JSONException e) {
+        // Log.e(TAG, "Invalid JSON string: " + json, e);
+        return null;
+    }
+}
 
     }
 
