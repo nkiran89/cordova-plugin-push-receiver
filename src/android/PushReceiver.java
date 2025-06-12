@@ -6,12 +6,13 @@ import org.apache.cordova.CallbackContext;
 
 import org.json.JSONObject;
 import org.json.JSONException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.BufferedReader;
+   import java.io.DataOutputStream;
+   import java.io.IOException;
+   import java.io.InputStreamReader;
+   import java.net.HttpURLConnection;
+   import java.net.URL;
 
 public class PushReceiver extends FirebaseMessagingService {
     @Override
@@ -21,7 +22,7 @@ public class PushReceiver extends FirebaseMessagingService {
         // TODO: Send message to JS via Cordova Plugin bridge
 
          //Create JSON string
-         String jsonInputString;
+         String jsonInputString="";
          try{
              JSONObject jsonObject = new JSONObject();
             jsonObject.put("Title", message);
@@ -32,49 +33,54 @@ public class PushReceiver extends FirebaseMessagingService {
          catch(JSONException e) {
                e.printStackTrace();
          }
-       
 
         //Call REST API to notify about push received on device
         String apiUrl = "https://kiran-nikam.outsystemscloud.com/SampleAPITest/rest/Notify/PostMessage";
+        try {
+               URL url = new URL(apiUrl); // Replace with your API endpoint
+               HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+               connection.setRequestMethod("POST"); // Or "GET", "PUT", etc.
+               connection.setRequestProperty("Content-Type", "application/json");
+               connection.setDoOutput(true);
+
+               DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+               outputStream.writeBytes(jsonInputString);
+               outputStream.flush();
+               outputStream.close();
+
+               int responseCode = connection.getResponseCode();
+               if (responseCode == HttpURLConnection.HTTP_OK) {
+                   BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                   StringBuilder response = new StringBuilder();
+                   String line;
+                   while ((line = reader.readLine()) != null) {
+                       response.append(line);
+                   }
+                   reader.close();
+                   //return response.toString();
+               } else {
+                   //return "Error: " + responseCode;
+               }
+
+                connection.disconnect();
+           } catch (IOException e) {
+               e.printStackTrace();
+                connection.disconnect();
+               //return "Error: " + e.getMessage();
+           }
+
+
+
+
+
+
+
+
+       
         
-        URL url = new URL(apiUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        //connection.setRequestProperty("Authorization", "Bearer your_api_key");
-        connection.setDoOutput(true);
-
-        try (OutputStream outputStream = connection.getOutputStream()) {
-            byte[] input = jsonInputString.getBytes("utf-8");
-            outputStream.write(input, 0, input.length);
-        }
-
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                System.out.println("Response: " + response.toString());
-            }
-        } else {
-            System.out.println("Error: " + responseCode);
-        }
-
-        connection.disconnect();
+       
+       
     }
-
-    public static JSONObject toJsonObject(String json){
-    try {
-        return new JSONObject(json);
-    } catch (JSONException e) {
-        // Log.e(TAG, "Invalid JSON string: " + json, e);
-        return null;
-    }
-}
 
     }
 
