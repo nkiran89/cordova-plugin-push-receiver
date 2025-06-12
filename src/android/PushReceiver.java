@@ -65,7 +65,6 @@ public class PushReceiver extends FirebaseMessagingService {
                 connection.disconnect();
            } catch (IOException e) {
                e.printStackTrace();
-                connection.disconnect();
                //return "Error: " + e.getMessage();
            }
 
