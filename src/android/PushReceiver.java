@@ -31,8 +31,6 @@ public class PushReceiver extends FirebaseMessagingService {
          }
          catch(JSONException e) {
                e.printStackTrace();
-               return null; 
-
          }
        
 
