@@ -17,7 +17,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
   <name>PushReceiver</name>
   <js-module src="www/PushReceiver.js" name="PushReceiver">
-    <clobbers target="PushReceiver" />
+    <clobbers target="cordova.plugins.PushReceiver" />
   </js-module>
 
   <platform name="android">
